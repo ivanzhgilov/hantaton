@@ -1,0 +1,5 @@
+flask==3.0.0
+Flask-Login==0.6.3
+werkzeug==3.0.1
+SQLAlchemy==2.0.23
+flask-wtf==1.2.1

@@ -1,2 +1,3 @@
-from .users import User
-from .news import News
+from .children import Child
+from .admins import Admin
+from .waiting_response import WaitingResponse

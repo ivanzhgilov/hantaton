@@ -8,6 +8,10 @@ class Admin(SqlAlchemyBase):
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     email = sqlalchemy.Column(sqlalchemy.String, nullable=True, unique=True)
+    surname = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    patronymic = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    position = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String)
 
     def set_password(self, password):

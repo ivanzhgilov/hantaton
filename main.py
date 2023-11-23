@@ -2,8 +2,13 @@ from flask import Flask, render_template, redirect, make_response, jsonify
 from flask_login import login_user, LoginManager, logout_user, login_required, current_user
 
 from data import db_session
+from data.admins import Admin
+from data.children import Child
+from data.waiting_response import WaitingResponse
 from forms.register import RegisterForm
 from forms.login import LoginForm
+from forms.register_admin import RegisterAdminForm
+from utils import search_fullname, search_filters
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -40,7 +45,6 @@ def index():
     return render_template('journal_works.html', title=title, jobs=jobs, team_leaders=team_leaders)
 
 
-@app.route("/login")
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -72,9 +76,34 @@ def logout():
     return redirect("/")
 
 
+@app.route('register_admin', methods=['GET', 'POST'])
+def register_admin():
+    form = RegisterAdminForm()
+    if form.validate_on_submit():
+        if form.password.data != form.password_again.data:
+            return "пароли не совпадают"
+        db_sess = db_session.create_session()
+        if db_sess.query(Admin).filter(Admin.email == form.email.data).first():
+            return "одна почта"
+        if db_sess.query(User).filter(User.surname == form.surname.data, User.name == form.name.data).first():
+            return "сотрудник зарегистрирован"
+        admin = Admin(
+            name=form.name.data,
+            email=form.email.data,
+            surname=form.surname.data,
+            patronymic=form.age.data,
+            position=form.position.data,
+        )
+        admin.set_password(form.password.data)
+        db_sess.add(admin)
+        db_sess.commit()
+        return redirect("/admin_main_window")
+    return "файл html регистрации"
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegisterForm()
+    form = RegisterAdminForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
             return render_template('register.html', title='Регистрация',
@@ -102,6 +131,26 @@ def register():
         db_sess.commit()
         return redirect('/')
     return render_template('register.html', title='Регистрация', form=form)
+
+
+@app.route('/personal_account', methods=['GET', 'POST'])
+def personal_account():
+    pass
+
+
+@app.route('/admin_main_window', methods=['GET', 'POST'])
+def admin_main_window():
+    pass
+
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    pass
+
+
+@app.route('/viewing_applications', methods=['GET', 'POST'])
+def viewing_applications():
+    pass
 
 
 if __name__ == '__main__':

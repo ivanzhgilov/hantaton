@@ -1,15 +1,19 @@
 from flask import Flask, render_template, redirect, make_response, jsonify
 from flask_login import login_user, LoginManager, logout_user, login_required, current_user
-from sqlalchemy import select
 
-from data.user import User
-from data.jobs import Jobs
 from data import db_session
+from data.admins import Admin
+from data.children import Child
+from data.waiting_response import WaitingResponse
 from forms.register import RegisterForm
-from forms.emergency_access import EmergencyAccess
+from forms.login import LoginForm
+from forms.register_admin import RegisterAdminForm
+from utils import search_fullname, search_filters
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 
 def main():
@@ -41,64 +45,65 @@ def index():
     return render_template('journal_works.html', title=title, jobs=jobs, team_leaders=team_leaders)
 
 
-@app.route('/training/<prof>')
-def training(prof):
-    title = "Тренировочный центр"
-    if "инженер" in prof or "строитель" in prof:
-        professional_orientation = "Инженерные тренажеры"
-    else:
-        professional_orientation = "Научные симуляторы"
-    return render_template('training.html', title=title, professional_orientation=professional_orientation)
-
-
-@app.route('/list_prof/<display_method>')
-def list_prof(display_method):
-    list_professions = ["инженер-исследователь", "пилот", "строитель", "экзобиолог", "врач",
-                        "инженер по терраформированию", "климатолог", "спеиалист по радиаионной защите", "астролог",
-                        "гляциолог", "инженер жизнеобеспечения", "метеоролог", "оператор марсохода", "киберинженер",
-                        "штурман", "пилот дронов"]
-    return render_template('list_prof.html', list_professions=list_professions, display_methodist=display_method)
-
-
-@app.route('/answer')
-@app.route('/auto_answer')
-def answer():
-    values = {
-        'title': "Анкета",
-        'surname': "Watny",
-        'name': "Mark",
-        'education': "выше среднего",
-        'profession': "штурман марсохода",
-        'sex': "male",
-        'motivation': "Всегда мечтал застрять на Марсе!",
-        'ready': True
-    }
-    return render_template('auto_answer.html', **values)
-
-
-@app.route('/emergency_access', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = EmergencyAccess()
-    access = False
+    form = LoginForm()
     if form.validate_on_submit():
-        access = True
-    return render_template('emergency_access.html', title='Авторизация', form=form, access=access)
+        if form.submit.data:
+            db_sess = db_session.create_session()
+            user = db_sess.query(User).filter(User.email == form.email.data).first()
+            if user and user.check_password(form.password.data):
+                login_user(user, remember=form.remember_me.data)
+                return redirect("/")
+            return render_template('login.html',
+                                   message="Неправильный логин или пароль",
+                                   form=form)
+        elif form.register.data:
+            return redirect('/register')
+    return render_template('login.html', title='Авторизация', form=form)
 
 
-@app.route('/distribution')
-def distribution():
-    astronauts = ["Ридли Скотт", "Энди Уир", "Марк Уотни", "Венката Капур", "Тедди Сандерс", "Шон Бин"]
-    return render_template('distribution.html', astronauts=astronauts)
+@login_manager.user_loader
+def load_user(user_id):
+    db_sess = db_session.create_session()
+    return db_sess.query(User).get(user_id)
 
 
-@app.route('/table/<sex>/<age>')
-def table(sex, age):
-    return render_template('table.html', age=int(age), sex=sex)
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
+
+
+@app.route('register_admin', methods=['GET', 'POST'])
+def register_admin():
+    form = RegisterAdminForm()
+    if form.validate_on_submit():
+        if form.password.data != form.password_again.data:
+            return "пароли не совпадают"
+        db_sess = db_session.create_session()
+        if db_sess.query(Admin).filter(Admin.email == form.email.data).first():
+            return "одна почта"
+        if db_sess.query(User).filter(User.surname == form.surname.data, User.name == form.name.data).first():
+            return "сотрудник зарегистрирован"
+        admin = Admin(
+            name=form.name.data,
+            email=form.email.data,
+            surname=form.surname.data,
+            patronymic=form.age.data,
+            position=form.position.data,
+        )
+        admin.set_password(form.password.data)
+        db_sess.add(admin)
+        db_sess.commit()
+        return redirect("/admin_main_window")
+    return "файл html регистрации"
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegisterForm()
+    form = RegisterAdminForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
             return render_template('register.html', title='Регистрация',
@@ -126,6 +131,26 @@ def register():
         db_sess.commit()
         return redirect('/')
     return render_template('register.html', title='Регистрация', form=form)
+
+
+@app.route('/personal_account', methods=['GET', 'POST'])
+def personal_account():
+    pass
+
+
+@app.route('/admin_main_window', methods=['GET', 'POST'])
+def admin_main_window():
+    pass
+
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    pass
+
+
+@app.route('/viewing_applications', methods=['GET', 'POST'])
+def viewing_applications():
+    pass
 
 
 if __name__ == '__main__':

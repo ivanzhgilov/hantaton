@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+</head>
+
+<body>
+
+    <header>
+        <h1>
+            Одаренные дети Югры
+            <a href="profile.html">Профиль</a>
+        </h1>
+    </header>
+
+    <main>
+        <a href="bd_user.html"><button> </button></a> <!--  Крестик в BD -->
+
+        <forma autocomplete="on" method="post">
+            {% extends "base.html" %}
+            <table>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Область знаний</th>
+                    <th>Город</th>
+                </tr>
+                {% for row in rows %}
+                <tr>
+                    <td>row.fullname</td>
+                    <td>row.region_ed</td>
+                    <td>row.city</td>
+                </tr>
+                {% endfor %}
+            </table>
+
+        </forma>
+    
+    </main>
+
+</body>
+</html>

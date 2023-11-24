@@ -1,3 +1,28 @@
 .shift {
     font-family: sans-serif;
 }
+
+img.background {
+    min-height: 100%;
+    min-width: 640px;
+    width: 100%;
+    height: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    /* Зависит от размера изображения */
+    @media screen and (max-width: 640px){
+    img.bg {
+        left: 50%;
+        margin-left: -320px;
+    }
+    }
+}
+
+html {
+    background: url(img\7lichnost.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}

@@ -82,7 +82,7 @@ def register_admin():
             name=form.name.data,
             email=form.email.data,
             surname=form.surname.data,
-            patronymic=form.age.data,
+            patronymic=form.patronymic.data,
             position=form.position.data,
         )
         admin.set_password(form.password.data)
@@ -94,34 +94,35 @@ def register_admin():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegisterAdminForm()
+    form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
-            return render_template('register.html', title='Регистрация',
+            return render_template('reg.html', title='Регистрация',
                                    form=form,
                                    message="Пароли не совпадают")
         db_sess = db_session.create_session()
-        if db_sess.query(User).filter(User.email == form.email.data).first():
-            return render_template('register.html', title='Регистрация',
+        if db_sess.query(Child).filter(Child.email == form.email.data).first():
+            return render_template('reg.html', title='Регистрация',
                                    form=form,
                                    message="одна почта - один человек")
-        if db_sess.query(User).filter(User.surname == form.surname.data, User.name == form.name.data).first():
-            return render_template('register.html', title='Регистрация', form=form,
+        if db_sess.query(Child).filter(Child.surname == form.surname.data, Child.name == form.name.data).first():
+            return render_template('reg.html', title='Регистрация', form=form,
                                    message="ну ладно одинаковые имена, ладно фамилии, но по отдельности")
-        user = User(
+        child = Child(
             name=form.name.data,
             email=form.email.data,
             surname=form.surname.data,
-            age=form.age.data,
-            position=form.position.data,
-            speciality=form.speciality.data,
-            address=form.address.data
+            patronymic=form.patronymic.data,
+            birthday=form.birthday.data,
+            city=form.city.data,
+            link_to_achievements=form.link_to_achievements.data,
+            areas_giftedness=form.areas_giftedness.data
         )
-        user.set_password(form.password.data)
-        db_sess.add(user)
+        child.set_password(form.password.data)
+        db_sess.add(child)
         db_sess.commit()
-        return redirect('/')
-    return render_template('register.html', title='Регистрация', form=form)
+        return redirect('/login')
+    return render_template('reg.html', title='Регистрация', form=form)
 
 
 @app.route('/personal_account', methods=['GET', 'POST'])

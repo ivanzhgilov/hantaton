@@ -14,7 +14,7 @@ class Child(SqlAlchemyBase):
     date_of_birth = sqlalchemy.Column(sqlalchemy.Date)
     city = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     email = sqlalchemy.Column(sqlalchemy.String, nullable=True, unique=True)
-    telephone_number = sqlalchemy.Column(sqlalchemy.String, nullable=True, unique=True)
+    link_to_achievements = sqlalchemy.Column(sqlalchemy.String, nullable=True, unique=True)
     areas_giftedness = sqlalchemy.Column(sqlalchemy.String, nullable=True, default='нет')
     hashed_password = sqlalchemy.Column(sqlalchemy.String)
 

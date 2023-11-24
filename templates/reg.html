@@ -3,48 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="HANTATON\static\css\main.css">
     <title>Document</title>
 </head>
 <body class="shift">
     <header class="head">
         <h1>    Одаренные дети Югры
-            <a href="login.html"><button>Профиль</button></a>
-            <a href="login.html"> <button>Войти</button> </a>
-            <a href="reg.html"><button>Регистрация</button></a>
+            <a href="login"><button>Профиль</button></a>
+            <a href="login"> <button>Войти</button> </a>
+            <a href="register"><button>Регистрация</button></a>
         </h1>
     </header>
 
     <main>
-        <a href="index.html"><button> </button></a>
         <!-- форма регистрации -->
-        <form action="/">
-            <label for="name">ФИО</label>
-            <input type="text" placeholder="Введите ваше ФИО" id="" name="">
+        <form autocomplete="on" method="post">
+            <label>ФИО</label>
+                <p>{{ form.surname(class="form-control", type="text", placeholder="Фамилия") }}</p>
+                <p>{{ form.name(class="form-control", type="text", placeholder="Имя") }}</p>
+                <p>{{ form.patronymic(class="form-control", type="text", placeholder="Отчество") }}</p>
+                {% for error in form.surname.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
 
             <br>
 
-            <label for="email">Почта</label>
-            <input type="text" placeholder="Введите вашу почту" id="" name="">
+            <label>Почта</label>
+                {{ form.email(class="form-control", type="email") }}
+                {% for error in form.email.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
 
             <br>
 
-            <label for="region_for_ed">Введите ваши область(и) таланта(ов)</label>
-            <input type="text" placeholder="Введите область" id="" name="">
-            
-            <br>
-
-            <label for="link_for_yadisk">Ссылка на Яндекс.Диск или Google Диск</label>
-            <input type="text" placeholder="Введите ссылку" id=""  name="">
-
-            <br>
-
-            <label for="interview">Расскажите о себе, чем вы занимаетесь(до 300 слов)</label>
-            <textarea name="" id="" cols="30" rows="10"></textarea>
+            <label>Введите вашу(и) область(и) таланта(ов)</label>
+                {{ form.areas_giftedness(class="form-control", type="text") }}
+                {% for error in form.areas_giftedness.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
 
             <br>
 
-            <a href="profile.html"><input type="submit" value="Оправить" name="" id=""></a>
+            <label>Ссылка на Яндекс.Диск или Google Диск</label>
+                {{ form.link_to_achievements(class="form-control", type="text") }}
+                {% for error in form.link_to_achievements.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+
+            <br>
+
+
+            <label>Дата рождения</label>
+                {{ form.birthday(class="form-control", type="date") }}
+                {% for error in form.birthday.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+
+            <br>
+
+            <label>Город</label>
+                {{ form.city(class="form-control", type="text") }}
+                {% for error in form.city.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+
+            <br>
+
+                        <label>Пароль</label>
+                {{ form.password(class="form-control", type="password") }}
+                {% for error in form.password.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+
+            <br>
+
+                                    <label>Повторите пароль</label>
+                {{ form.password_again(class="form-control", type="password") }}
+                {% for error in form.password_again.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+
+            <br>
+
+            <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
 
         </form>
     </main>

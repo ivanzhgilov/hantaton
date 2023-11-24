@@ -22,9 +22,9 @@
         </tr>
         {% for row in rows %}
         <tr>
-            <td>row.fullname</td>
-            <td>row.region_ed</td>
-            <td>row.city</td>
+            <td>{% row.fullname %}</td>
+            <td>{% row.region_ed %}</td>
+            <td>{% row.city %}</td>
         </tr>
         {% endfor %}
     </table>

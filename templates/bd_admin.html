@@ -25,12 +25,12 @@
         </tr>
         {% for row in rows %}
         <tr>
-            <td>row.fullname</td>
-            <td>row.region_ed</td>
-            <td>row.city</td>
-            <td>row.link_for_yadisk</td>
-             <td>row.interview</td> <!--это краткое описание -->
-            <td>row.email</td> 
+            <td>{% row.surname %} {% row.name %} {% row.patronymic %}</td>
+            <td>{% row.region_ed %}</td>
+            <td>{% row.city %}</td>
+            <td>{% row.link_for_yadisk %}</td>
+             <td>{% row.interview %}</td> <!--это краткое описание -->
+            <td>{% row.email %}</td>
         </tr>
         {% endfor %}
     </table>

@@ -34,15 +34,7 @@ def bad_request(_):
 @app.route('/')
 @app.route('/index')
 def index():
-    title = "works"
-    db_sess = db_session.create_session()
-    jobs = db_sess.query(Jobs)
-    team_leaders = []
-    for job in jobs:
-        leader = db_sess.query(User).filter(User.id == job.team_leader)[0]
-        leader_name = f"{leader.surname} {leader.name}"
-        team_leaders.append(leader_name)
-    return render_template('journal_works.html', title=title, jobs=jobs, team_leaders=team_leaders)
+    return render_template('index.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -51,16 +43,15 @@ def login():
     if form.validate_on_submit():
         if form.submit.data:
             db_sess = db_session.create_session()
-            user = db_sess.query(User).filter(User.email == form.email.data).first()
+            user = db_sess.query(Child, Admin).filter(
+                Child.email == form.email.data | Admin.email == form.email.data).first()
             if user and user.check_password(form.password.data):
                 login_user(user, remember=form.remember_me.data)
                 return redirect("/")
             return render_template('login.html',
                                    message="Неправильный логин или пароль",
                                    form=form)
-        elif form.register.data:
-            return redirect('/register')
-    return render_template('login.html', title='Авторизация', form=form)
+    return render_template('login.html', form=form)
 
 
 @login_manager.user_loader
@@ -76,7 +67,7 @@ def logout():
     return redirect("/")
 
 
-@app.route('register_admin', methods=['GET', 'POST'])
+@app.route('/register_admin', methods=['GET', 'POST'])
 def register_admin():
     form = RegisterAdminForm()
     if form.validate_on_submit():

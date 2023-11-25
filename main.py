@@ -76,7 +76,7 @@ def logout():
     return redirect("/")
 
 
-@app.route('register_admin', methods=['GET', 'POST'])
+@app.route('/register_admin ', methods=['GET', 'POST'])
 def register_admin():
     form = RegisterAdminForm()
     if form.validate_on_submit():
